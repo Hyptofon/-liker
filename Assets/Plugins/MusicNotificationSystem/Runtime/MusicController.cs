@@ -12,12 +12,15 @@ public class MusicController : MonoBehaviour
     
     [Header("Settings")]
     [SerializeField] private AudioSource musicSource;
-    [SerializeField] private BaseMusicPopup popupUI;
 
     private int _currentTrackIndex = -1;
     public event Action<MusicTrack> OnTrackChanged;
 
-    private void Awake() => Instance = this;
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     private void Start()
     {
@@ -41,15 +44,8 @@ public class MusicController : MonoBehaviour
 
     private void PlayTrack(MusicTrack track)
     {
-        //Debug.Log("Playing track: " + track.trackName); 
         musicSource.clip = track.clip;
         musicSource.Play();
-        
         OnTrackChanged?.Invoke(track);
-        
-        if (popupUI != null)
-        {
-            popupUI.Show(track);
-        }
     }
 }

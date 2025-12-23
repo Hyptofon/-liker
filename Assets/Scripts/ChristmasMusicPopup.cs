@@ -12,8 +12,23 @@ public class ChristmasMusicPopup : BaseMusicPopup
 
     [Header("Settings")]
     [SerializeField] private float showDuration = 3f;
-    [SerializeField] private Vector2 hiddenPosition = new Vector2(-500, 400); // За екраном
-    [SerializeField] private Vector2 visiblePosition = new Vector2(20, 400);  // На екрані
+    [SerializeField] private Vector2 hiddenPosition = new Vector2(-500, 400); 
+    [SerializeField] private Vector2 visiblePosition = new Vector2(20, 400);
+    
+    private void OnEnable()
+    {
+        if (MusicController.Instance != null)
+        {
+            MusicController.Instance.OnTrackChanged += Show;
+        }
+    }
+    private void OnDisable()
+    {
+        if (MusicController.Instance != null)
+        {
+            MusicController.Instance.OnTrackChanged -= Show;
+        }
+    }
 
     private void Start()
     {
@@ -24,8 +39,9 @@ public class ChristmasMusicPopup : BaseMusicPopup
     {
         trackNameText.text = track.trackName;
         artistText.text = track.artistName;
+        panelRect.DOKill(); 
         panelRect.DOAnchorPos(visiblePosition, 0.5f).SetEase(Ease.OutBack);
-        Invoke(nameof(Hide), showDuration);
+        DOVirtual.DelayedCall(showDuration, Hide);
     }
 
     public override void Hide()
